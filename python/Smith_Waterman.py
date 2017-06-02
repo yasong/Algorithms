@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # @Author: Xiaokang Yin
 # @Date:   2017-06-01 19:47:41
-# @Last Modified by:   Xiaokang Yin
-# @Last Modified time: 2017-06-02 22:00:29
+# @Last Modified by:   xiaokang
+# @Last Modified time: 2017-06-02 23:02:22
 
 # complete the Needleman and Wunsch algorithm
 
@@ -28,12 +28,23 @@ def Needleman_Wunsch(str1, str2):
 
     for i in range(len_str1):
         for j in range(len_str2):
-            #if ()
             lcs[i+1].append( max(lcs[i][j] + (1 if str1[i] == str2[j] else -1),
                 lcs[i][j+1] + penalty,
                 lcs[i+1][j] + penalty，
                 0)
             )
+            if(lcs[i][j] > Max_value):
+                Max_value = lcs[i][j]
+                Max_index = [i,j]
+            if(lcs[i+1][j] > Max_value):
+                Max_value = lcs[i+1][j]
+                Max_index = [i+1,j]
+            if(lcs[i][j+1] > Max_value):
+                Max_value = lcs[i][j+1]
+                Max_index = [i,j+1]
+            if(lcs[i+1][j+1] > Max_value):
+                Max_value = lcs[i+1][j+1]
+                Max_index = [i+1,j+1]
 
     i = len_str1
     j = len_str2
@@ -43,7 +54,7 @@ def Needleman_Wunsch(str1, str2):
     #Alignment_str2 = u"%s%s" % (str2[j], Alignment_str2)
 
     #traceback
-    while i > 0 or j > 0:
+    '''while i > 0 or j > 0:
         if (i > 0 and j > 0 and lcs[i][j] == lcs[i-1][j-1] + (1 if str1[i-1] == str2[j-1] else -1)):
             Alignment_str1 = u"%s%s" % (str1[i-1], Alignment_str1)
             Alignment_str2 = u"%s%s" % (str2[j-1], Alignment_str2)
@@ -57,7 +68,15 @@ def Needleman_Wunsch(str1, str2):
             Alignment_str1 = u"%s%s" % ('-', Alignment_str1)
             Alignment_str2 = u"%s%s" % (str2[j-1], Alignment_str2)
             j = j - 1
+    '''
+    #最大数所在位置
+    i = Max_index[0]
+    j = Max_index[1]
 
+    while（lcs[i][j] > 0 and lcs[i-1][j-1] > 0 and lcs[i-1][j] > 0 and lcs[i][j-1] > 0):
+        
+
+    
     print Alignment_str1
     print Alignment_str2
 def main():
