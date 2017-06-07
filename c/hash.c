@@ -2,7 +2,7 @@
 * @Author: Xiaokang Yin
 * @Date:   2017-06-05 09:23:31
 * @Last Modified by:   Xiaokang Yin
-* @Last Modified time: 2017-06-06 10:05:23
+* @Last Modified time: 2017-06-07 16:49:48
 */
 
 #include <stdio.h>
@@ -10,6 +10,108 @@
 #include <string.h>
 #include "hash.h"
 
+/** Create node */
+hash_node_t *hash_node_alloc(void *key, void *value)
+{
+    hash_node_t *node;
+
+    node = mallco(sizeof(*node));
+    assert(node != NULL);
+    node->key = key;
+    node->value = value;
+    node->next = NULL;
+
+    return node;
+}
+
+/** Delete node*/
+void hash_node_delete(hash_node_t *node)
+{
+    if (node) {
+        free(node);
+    }
+}
+/** Create hash table */
+hash_table_t *hash_table_create(hash_fcompute hash_func, hash_fcompare key_cmp, 
+                                int hash_size)
+{
+    hash_table_t *ht;
+
+    if (!hash_func || (hash_size <= 0))
+        return NULL;
+    ht = malloc(sizeof(*ht)); //alloc memory space for ht
+    assert(ht != NULL);
+
+    memset(ht, 0, sizeof(*ht));
+    ht->hash_func = hash_func;
+    ht->key_cmp = key_cmp;
+    ht->size = hash_size;
+    ht->nodes = calloc(ht->size, sizeof(hash_node_t *)); //alloc memory space for nodes, number is hash_size.
+    assert(ht->nodes != NULL);
+
+    return ht;
+}
+
+/** Delete an existing hash table */
+void hash_table_delete(hash_table_t *ht)
+{
+    if (ht) {
+        if (ht->nodes) {
+            free(ht->nodes);
+        }
+        free(ht);
+    }
+}
+
+/** Insert a new pair(key, value) if sucess return 0*/
+int hash_table_insert(hash_table_t *ht, void *key, void *value)
+{
+    hash_node_t *node;
+    u_int hash_val;
+
+    assert(ht != NULL);
+
+    hash_val = ht->hash_func(key) % ht->size;
+
+    for (node = ht->nodes[hash_val]; node; node = node->next) {
+        if (ht->key_cmp(node->key, key)) {
+            node->value = value;
+            return 0;
+        }
+    }
+
+    node = hash_node_alloc(key, value);
+    node->next = ht->nodes[hash_val];
+    ht->nodes[hash_val] = node;
+    ht->nnodes++；
+
+    return 0；
+}
+
+/** Remove a pair（key, value) from a hash table */
+void *hash_table_remove(hash_table_t *ht, void *key)
+{
+    hash_node_t **node, *tmp;
+    u_int hash_val;
+    void *value;
+
+    assert(ht != NULL);
+
+    hash_val = ht->hash_func(key) % ht->size;
+
+    for (node = &ht->nodes[hash_val]; *node; node = &(*node)->next) {
+        if (ht->key_cmp((*node)->key, key)) {
+            tmp = *node;
+            value = tmp->value;
+            *node = tmp->next;
+
+            hash_node_delete(tmp);
+            return value;
+        }
+    }
+
+    return NULL;
+}
 
 /** CMP String  equal return 1, not equal return 0*/
 int str_equal(void *str1, void *str2)

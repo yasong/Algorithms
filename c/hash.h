@@ -33,6 +33,23 @@ struct hash_table{
     hash_fcompare key_cmp;
 };
 
+/** Create node */
+hash_node_t *hash_node_alloc(void *key, void *value);
+
+/** Delete node */
+void hash_node_delete(hash_node_t *node);
+
+/** Create hash table */
+hash_table_t *hash_table_create(hash_fcompute hash_func, hash_fcompare key_cmp, 
+                                int hash_size);
+/** Delete an existing hash table */
+void hash_table_delete(hash_table_t *ht);
+
+/** Insert a new pair(key, value) if sucess return 0*/
+int hash_table_insert(hash_table_t *ht, void *key, void *value);
+
+/** Remove a pair（key, value) from a hash table */
+void *hash_table_remove(hash_table_t *ht, void *key);
 
 /** String hash functions
 *function algorithm: ELF, RS, JS, PJW, BKDR, SDBM, DJB, DEK, AP
