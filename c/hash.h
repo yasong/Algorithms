@@ -51,6 +51,9 @@ int hash_table_insert(hash_table_t *ht, void *key, void *value);
 /** Remove a pair（key, value) from a hash table */
 void *hash_table_remove(hash_table_t *ht, void *key);
 
+/** Lookup the hash table */
+void *hash_table_lookup(hash_table_t *ht, void *key);
+
 /** String hash functions
 *function algorithm: ELF, RS, JS, PJW, BKDR, SDBM, DJB, DEK, AP
 **/

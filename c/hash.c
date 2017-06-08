@@ -113,6 +113,24 @@ void *hash_table_remove(hash_table_t *ht, void *key)
     return NULL;
 }
 
+/** Lookup the hash table */
+void *hash_table_lookup(hash_table_t *ht, void *key)
+{
+    hash_node_t *node;
+    u_int hash_val;
+
+    assert(ht != NULL);
+    
+    hash_val = ht->hash_func(key) % ht->size;
+
+    for (node = ht->nodes[hash_val]; node; node = node->next) {
+        if (ht->key_cmp(node->key, key)) {
+            return node->value;
+        }
+    }
+    return NULL;
+}
+
 /** CMP String  equal return 1, not equal return 0*/
 int str_equal(void *str1, void *str2)
 {
